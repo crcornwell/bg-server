@@ -1,4 +1,4 @@
-import org.haxors.battlegame.controllers._
+import org.haxors.battlegame.server.controllers.BattlegameController
 import org.scalatra._
 import javax.servlet.ServletContext
 
