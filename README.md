@@ -1,7 +1,4 @@
-## Start app and scan for changes:
+## Scalatra Atmosphere Server for Hosting a Battlegame
 
-```sh
-$ ./sbt
-> ~;container:start; container:reload /
-```
-Check it out at http://localhost:8080/messages
+This is a websockets based project for hosting real-time rpg-style
+battles between multiple players.
