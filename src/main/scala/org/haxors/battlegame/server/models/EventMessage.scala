@@ -1,5 +1,7 @@
 package org.haxors.battlegame.server.models
 
+import java.util.UUID
+
 sealed abstract class EventMessage
 
 case class PlayerLeftMessage(payload: PlayerLeftPayload, event: String = "PLAYER_LEFT")
@@ -21,6 +23,11 @@ case class ChallengeReceivedMessage(payload: ChallengeReceivedPayload, event: St
   extends EventMessage
 
 case class ChallengeReceivedPayload(from: String, to: String)
+
+case class ChallengeAcceptedMessage(payload: ChallengeAcceptedPayload, event: String = "CHALLENGE_ACCEPTED")
+  extends EventMessage
+
+case class ChallengeAcceptedPayload(player1: String, player2: String, gameId: String)
 
 case class UnauthorizedMessage(payload: String, event: String = "UNAUTHORIZED_MESSAGE")
   extends EventMessage

@@ -21,7 +21,7 @@ class BattlegameController extends ScalatraServlet with SessionSupport
 
   protected implicit val jsonFormats: Formats = DefaultFormats
   private var players: TrieMap[String, Player] = new TrieMap[String, Player]()
-  private var games: TrieMap[UUID, Engine] = new TrieMap[UUID, Engine]()
+  private var games: TrieMap[String, Engine] = new TrieMap[String, Engine]()
   private val playerService: PlayerService = new PlayerService(players)
 
   before() {
@@ -63,9 +63,18 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 val msg = new ChallengeReceivedMessage(challenge)
                 BroadcasterFactory.getDefault().lookup(to.uuid).broadcast(write(msg))
               case "CHALLENGE_ACCEPTED" =>
-                val game = new Engine
-
-
+                val challengePayload: ChallengeAcceptedPayload = (json \ "payload").extract[ChallengeAcceptedPayload]
+                val player1: Player = players(challengePayload.player1)
+                val player2: Player = players(challengePayload.player2)
+                val playersInGame: Seq[Player] = Seq(player1, player2)
+                val engine = new Engine
+                val gameId: String = UUID.randomUUID.toString
+                games += ((gameId, engine))
+                engine.start(playersInGame)
+                val msg = new ChallengeAcceptedMessage(
+                  new ChallengeAcceptedPayload(player1.name, player2.name, gameId))
+                BroadcasterFactory.getDefault.lookup(player1.uuid).broadcast(write(msg))
+                BroadcasterFactory.getDefault.lookup(player2.uuid).broadcast(write(msg))
             }
           }
           else {
