@@ -1,7 +1,9 @@
 package org.haxors.battlegame.server.controllers
 
 import java.util.UUID
+import org.atmosphere.cpr.BroadcasterFactory
 import org.haxors.battlegame.server.helpers._
+import game.engine._
 import org.haxors.battlegame.server.models._
 import org.json4s._
 import org.json4s.jackson.Serialization.write
@@ -19,6 +21,7 @@ class BattlegameController extends ScalatraServlet with SessionSupport
 
   protected implicit val jsonFormats: Formats = DefaultFormats
   private var players: TrieMap[String, Player] = new TrieMap[String, Player]()
+  private var games: TrieMap[UUID, Engine] = new TrieMap[UUID, Engine]()
   private val playerService: PlayerService = new PlayerService(players)
 
   before() {
@@ -54,6 +57,15 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 val chat = (json \ "payload").extract[String]
                 val msg = new ChatMessage(new ChatMessagePayload(player.name, chat))
                 broadcast(write(msg), Everyone)
+              case "CHALLENGE_RECEIVED" =>
+                val challenge = (json \ "payload").extract[ChallengeReceivedPayload]
+                val to: Player = players(challenge.to)
+                val msg = new ChallengeReceivedMessage(challenge)
+                BroadcasterFactory.getDefault().lookup(to.uuid).broadcast(write(msg))
+              case "CHALLENGE_ACCEPTED" =>
+                val game = new Engine
+
+
             }
           }
           else {

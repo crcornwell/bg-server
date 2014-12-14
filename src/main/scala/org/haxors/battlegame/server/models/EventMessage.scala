@@ -17,5 +17,10 @@ case class ChatMessage(payload: ChatMessagePayload, event: String = "CHAT_MESSAG
 
 case class ChatMessagePayload(from: String, message: String)
 
+case class ChallengeReceivedMessage(payload: ChallengeReceivedPayload, event: String = "CHALLENGE_RECEIVED")
+  extends EventMessage
+
+case class ChallengeReceivedPayload(from: String, to: String)
+
 case class UnauthorizedMessage(payload: String, event: String = "UNAUTHORIZED_MESSAGE")
   extends EventMessage
