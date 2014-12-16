@@ -3,7 +3,7 @@ import Keys._
 import org.scalatra.sbt._
 import org.scalatra.sbt.PluginKeys._
 
-object MyAppBuild extends Build {
+object ServerBuild extends Build {
   val Organization = "org.haxors"
   val Name = "battlegame-server"
   val Version = "0.1.0-SNAPSHOT"
@@ -20,7 +20,6 @@ object MyAppBuild extends Build {
       scalaVersion := ScalaVersion,
       resolvers += Classpaths.typesafeReleases,
       libraryDependencies ++= Seq(
-        "org.haxors" %% "battlegame-engine" % "1.0-SNAPSHOT",
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "org.scalatra" %% "scalatra-json" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
@@ -33,5 +32,8 @@ object MyAppBuild extends Build {
         "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
       )
     )
-  )
+  ).dependsOn(gameEngine).dependsOn(common)
+
+  lazy val gameEngine = RootProject(uri("git://github.com/0xfadedace/battlegame-engine.git"))
+  lazy val common = RootProject(uri("git://github.com/0xfadedace/battlegame-common.git"))
 }

@@ -1,6 +1,6 @@
 package org.haxors.battlegame.server.helpers
 
-import org.haxors.battlegame.server.models._
+import org.haxors.battlegame.model._
 
 import scala.collection.concurrent.TrieMap
 

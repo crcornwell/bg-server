@@ -1,7 +1,5 @@
 package org.haxors.battlegame.server.models
 
-import java.util.UUID
-
 sealed abstract class EventMessage
 
 case class PlayerLeftMessage(payload: PlayerLeftPayload, event: String = "PLAYER_LEFT")

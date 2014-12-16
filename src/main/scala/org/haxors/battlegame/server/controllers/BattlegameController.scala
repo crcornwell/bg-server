@@ -1,9 +1,10 @@
 package org.haxors.battlegame.server.controllers
 
 import java.util.UUID
-import org.atmosphere.cpr.BroadcasterFactory
+import org.atmosphere.cpr.{Broadcaster, BroadcasterFactory}
 import org.haxors.battlegame.server.helpers._
-import game.engine._
+import org.haxors.battlegame.engine._
+import org.haxors.battlegame.model.Player
 import org.haxors.battlegame.server.models._
 import org.json4s._
 import org.json4s.jackson.Serialization.write
@@ -61,7 +62,7 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 val challenge = (json \ "payload").extract[ChallengeReceivedPayload]
                 val to: Player = players(challenge.to)
                 val msg = new ChallengeReceivedMessage(challenge)
-                BroadcasterFactory.getDefault().lookup(to.uuid).broadcast(write(msg))
+                BroadcasterFactory.getDefault().lookup[Broadcaster](to.uuid).broadcast(write(msg))
               case "CHALLENGE_ACCEPTED" =>
                 val challengePayload: ChallengeAcceptedPayload = (json \ "payload").extract[ChallengeAcceptedPayload]
                 val player1: Player = players(challengePayload.player1)
@@ -73,8 +74,8 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 engine.start(playersInGame)
                 val msg = new ChallengeAcceptedMessage(
                   new ChallengeAcceptedPayload(player1.name, player2.name, gameId))
-                BroadcasterFactory.getDefault.lookup(player1.uuid).broadcast(write(msg))
-                BroadcasterFactory.getDefault.lookup(player2.uuid).broadcast(write(msg))
+                BroadcasterFactory.getDefault.lookup[Broadcaster](player1.uuid).broadcast(write(msg))
+                BroadcasterFactory.getDefault.lookup[Broadcaster](player2.uuid).broadcast(write(msg))
             }
           }
           else {
