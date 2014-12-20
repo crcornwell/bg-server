@@ -4,7 +4,7 @@ import java.util.UUID
 import org.atmosphere.cpr.{Broadcaster, BroadcasterFactory}
 import org.haxors.battlegame.server.helpers._
 import org.haxors.battlegame.engine._
-import org.haxors.battlegame.model.Player
+import org.haxors.battlegame.model._
 import org.haxors.battlegame.server.models._
 import org.json4s._
 import org.json4s.jackson.Serialization.write
@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class BattlegameController extends ScalatraServlet with SessionSupport
-  with ScalatraBase with JacksonJsonSupport
+  with ScalatraBase with JacksonJsonSupport with CorsSupport
   with AtmosphereSupport with JValueResult {
 
   protected implicit val jsonFormats: Formats = DefaultFormats
@@ -29,9 +29,14 @@ class BattlegameController extends ScalatraServlet with SessionSupport
     contentType = formats("json")
   }
 
+  options("/*") {
+    response.setHeader("Access-Control-Allow-Headers",
+      request.getHeader("Access-Control-Request-Headers"))
+  }
+
   post("/api/accesstoken") {
     val token: String = UUID.randomUUID.toString
-    val name: String = params("name")
+    val name: String = params("username")
     players += ((name, new Player(token, name)))
     "accesstoken" -> token
   }

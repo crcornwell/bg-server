@@ -1,7 +1,4 @@
 import sbt._
-import Keys._
-import org.scalatra.sbt._
-import org.scalatra.sbt.PluginKeys._
 
 object ServerBuild extends Build {
 
