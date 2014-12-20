@@ -54,7 +54,7 @@ class BattlegameController extends ScalatraServlet with SessionSupport
           disconnectPlayer(uuid)
         case JsonMessage(json) =>
           val player: Player = (json \ "player").extract[Player]
-          if (playerService.authenticatePlayer(player)) {
+          if (playerService.authenticatePlayer(player, uuid)) {
             val event: String = (json \ "event").extract[String]
             event match {
               case "PLAYER_JOINED" =>
@@ -73,10 +73,9 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 val player1: Player = players(challengePayload.player1)
                 val player2: Player = players(challengePayload.player2)
                 val playersInGame: Seq[Player] = Seq(player1, player2)
-                val engine = new Engine
+                val engine = new Engine(playersInGame)
                 val gameId: String = UUID.randomUUID.toString
                 games += ((gameId, engine))
-                engine.start(playersInGame)
                 val msg = new ChallengeAcceptedMessage(
                   new ChallengeAcceptedPayload(player1.name, player2.name, gameId))
                 BroadcasterFactory.getDefault.lookup[Broadcaster](player1.uuid).broadcast(write(msg))
@@ -85,7 +84,7 @@ class BattlegameController extends ScalatraServlet with SessionSupport
           }
           else {
             val msg = UnauthorizedMessage("Invalid Token")
-            broadcast(write(msg), Everyone)
+            broadcast(write(msg), OnlySelf)
           }
       }
 
@@ -113,6 +112,27 @@ class BattlegameController extends ScalatraServlet with SessionSupport
           val msg = new PlayerJoinedMessage(playerService.getPlayersInLobby)
           broadcast(write(msg), Everyone)
         }
+      }
+    }
+  }
+
+  atmosphere("/ws/game") {
+    new AtmosphereClient {
+      def receive = {
+        case JsonMessage(json) =>
+          val player: Player = (json \ "player").extract[Player]
+          if (playerService.authenticatePlayer(player, uuid)) {
+            val gameId: String = (json \ "gameid").extract[String]
+            val game: Engine = games(gameId)
+            if (game.authenticate(player)) {
+              val event: String = (json \ "event").extract[String]
+              event match {
+                case "GAME_START" =>
+
+              }
+            }
+          }
+
       }
     }
   }

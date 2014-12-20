@@ -14,9 +14,10 @@ class PlayerService(players: TrieMap[String, Player]) {
     players.filter(_._2.inLobby).keys
   }
 
-  def authenticatePlayer(player: Player): Boolean = {
+  def authenticatePlayer(player: Player, uuid: String): Boolean = {
     if (players.contains(player.name))
-      players(player.name).token == player.token
+      players(player.name).token == player.token &&
+        players(player.name).uuid == uuid
     else false
   }
 }
