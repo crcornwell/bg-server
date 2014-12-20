@@ -61,8 +61,8 @@ class BattlegameController extends ScalatraServlet with SessionSupport
                 addPlayerToLobby(player, uuid)
               case "CHAT_MESSAGE" =>
                 val chat = (json \ "payload").extract[String]
-                val msg = new ChatMessage(new ChatMessagePayload(player.name, chat))
-                broadcast(write(msg), Everyone)
+                val serialized: String = write(ChatMessage(ChatMessagePayload(player.name, chat)))
+                broadcast(TextMessage(serialized), Everyone)
               case "CHALLENGE_RECEIVED" =>
                 val challenge = (json \ "payload").extract[ChallengeReceivedPayload]
                 val to: Player = players(challenge.to)

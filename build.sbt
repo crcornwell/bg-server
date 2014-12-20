@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-json" % ScalatraVersion,
   "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
   "org.scalatra" %% "scalatra-atmosphere" % "2.3.0",
+  "org.atmosphere" % "atmosphere-runtime" % "2.2.4",
   "org.json4s" %% "json4s-jackson" % "3.2.11",
   "ch.qos.logback" % "logback-classic" % "1.0.6" % "runtime",
   "org.eclipse.jetty" % "jetty-plus" % "9.1.3.v20140225" % "container;provided",
