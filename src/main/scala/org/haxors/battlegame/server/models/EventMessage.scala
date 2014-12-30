@@ -29,3 +29,6 @@ case class ChallengeAcceptedPayload(player1: String, player2: String, gameId: St
 
 case class UnauthorizedMessage(payload: String, event: String = "UNAUTHORIZED_MESSAGE")
   extends EventMessage
+
+case class InvalidMessage(payload: String, event: String = "INVALID_MESSAGE")
+  extends EventMessage

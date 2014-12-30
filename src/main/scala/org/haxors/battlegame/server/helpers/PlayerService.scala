@@ -11,16 +11,15 @@ class PlayerService(players: TrieMap[String, Player]) {
   }
 
   def getPlayersInLobby: Iterable[String] = {
-    players.filter(_._2.inLobby).keys
+    players.filter(_._2.inLobby.getOrElse(false)).keys
   }
 
   def authenticatePlayer(player: Player, uuid: String): Boolean = {
-    /*
-    if (players.contains(player.name))
-      players(player.name).token == player.token &&
-        players(player.name).uuid == uuid
-    else false
-    */
-    true
+    val p = players.get(player.name)
+    p match {
+      case Some(p: Player) =>
+        p.token == player.token && (p.uuid == None || p.uuid == uuid)
+      case None => false
+    }
   }
 }
